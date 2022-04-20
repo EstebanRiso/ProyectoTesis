@@ -42,6 +42,7 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "defines.hpp": "c",
-        "queue": "cpp"
+        "queue": "cpp",
+        "cstring": "cpp"
     }
 }

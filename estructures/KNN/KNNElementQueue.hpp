@@ -1,6 +1,6 @@
 #ifndef KNNELEMENTQUEUE_HPP
 #define KNNELEMENTQUEUE_HPP
-
+#include "Rectangle.hpp"
 
 
 
@@ -35,8 +35,17 @@ class KNNElementQueue{
             return distance;
         }
 
+        Rectangle getCuadrant(){
+            return cuadrant;
+        }
+
         void toString(){
             return;
+        }
+
+        bool empty(){
+            if(this)return true;
+            else return false;
         }
 
 };

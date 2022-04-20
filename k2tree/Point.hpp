@@ -20,7 +20,8 @@ class Point{
         this->y = y;
     }
 
-    Point(){}
+
+    Point();
 
     Point(int id, int x, int y){
         this->x = x;
@@ -81,12 +82,12 @@ class Point{
  
     // fuera de la ecuación hasta el momento: bool equals()
 
-    bool equals(Point &o){
+    /*bool equals(Point &o){
       if(this == &o){
           return true;
       }
       if (o == NULL || )
-    }
+    }*/
 
     int HashCode(){
         int result = x;
