@@ -177,9 +177,14 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 	uint * bits;
 	BITRS *BTL;
 	
+	cout<<"tamano"<<sizeof(uint)*((nedges*maxl*K*K+W-1)/W)<<endl;
+
 	uint * bits_BTL=(uint *) malloc(sizeof(uint)*((nedges*maxl*K*K+W-1)/W));
 	for(i=0;i<((nedges*maxl*K*K+W-1)/W);i++)
 		bits_BTL[i]=0;
+	
+	cout<<"imprimir:"<<(nedges*maxl*K*K+W-1)/W<<endl;
+	
 	bits = bits_BTL;
 
 	q = AddItemOFFCONS(q,0,nedges);
@@ -213,7 +218,11 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 				if(boundariesK[j+1]!=boundariesK[j]){
 					conttmp++;
 					q=AddItemOFFCONS(q,boundariesK[j],boundariesK[j+1]);
-				
+
+					cout<<"bits:"<<*bits<<"| postotal:"<<postotal<<endl;
+					cout<<"p/W:"<< postotal/W <<"| p%W:"<< postotal%W<<endl;
+					cout<<"bitsetting:"<<bitset(bits,postotal)<<endl;					
+
 					bitset(bits,postotal);					
 				}
 				postotal++;
@@ -254,6 +263,13 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 		}
 		queuecont = conttmp;
 	}
+
+	cout<<"bits"<<bits[0]<<endl;
+	cout<<"bits"<<bits[1]<<endl;
+	cout<<"bits"<<bits[2]<<endl;
+	cout<<"bits"<<bits[3]<<endl;
+	cout<<"bits"<<bits[4]<<endl;
+	cout<<"bits"<<bits[5]<<endl;
 
 	rep->bt_len = postotal;
 
@@ -342,6 +358,7 @@ MREP * loadRepresentation(char * basename){
 	char *filename = (char *) malloc(sizeof(char)*(strlen(basename)+4));
 	strcpy(filename,basename);
 	strcat(filename,".kt");
+	cout<<"filename:"<<filename<<endl;
 	FILE * ft = fopen(filename,"r");
 	fread(&(rep->numberOfNodes),sizeof(uint),1,ft);
 	fread(&(rep->numberOfEdges),sizeof(ulong),1,ft);

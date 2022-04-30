@@ -7,9 +7,15 @@
 //El comparador pero no se como agregarlo al priorityqueue
 //CandidatesMaxComparator.hpp lo mismo, nose como agregarlo al priorityqueue
 
+struct MINHEAP{
 
-int compareKNNEQ2(KNNElementQueue o1 , KNNElementQueue o2){
-    return o1.getDistance() - o2.getDistance();
-}
+    bool operator()(KNNElementQueue const& o1 , KNNElementQueue const& o2){
+
+        KNNElementQueue a=o1;
+        KNNElementQueue b=o2;
+
+        return a.getDistance() > b.getDistance();
+    }
+};
 
 #endif

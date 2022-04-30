@@ -23,6 +23,8 @@ class KNNElementQueue2{
         this->radio=cuadrant.getT().getY()/2;
     }
 
+    ~KNNElementQueue2(){}
+
     double getRadio(){
         return radio;
     }

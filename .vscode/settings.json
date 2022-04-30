@@ -43,6 +43,7 @@
         "typeinfo": "cpp",
         "defines.hpp": "c",
         "queue": "cpp",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "functional": "cpp"
     }
 }

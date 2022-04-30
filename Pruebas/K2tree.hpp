@@ -11,24 +11,23 @@ class K2Tree{
 
     private:
 
-    MREP *tl;
+    MREP* tl;
 
     public:
-    K2Tree(){};
-    
+    K2Tree();
+    ~K2Tree(){};
 
     K2Tree(MREP *a){
       tl=a;
     }
 
-    ~K2Tree(){};
 
     BITRS* getBitArrayRS(){
         return tl->btl;
     }
 
     int getNodes(){
-      return tl->numberOfNodes;
+      return 1;
     }
 
     int getK(){

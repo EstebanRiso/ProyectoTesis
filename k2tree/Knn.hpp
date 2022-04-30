@@ -3,6 +3,9 @@
 #include <KNNElementQueue2.hpp>
 #include <queue>
 
+#ifndef KNN_HPP
+#define KNN_HPP
+
 class KNN{
     private:
 
@@ -149,3 +152,5 @@ class KNN{
         }
 
 };
+
+#endif

@@ -1,4 +1,5 @@
 #include "defines.hpp"
+#include "basic.hpp"
 #ifndef BITARRAYRS_HPP
 #define BITARRAYRS_HPP
 
@@ -13,8 +14,14 @@ typedef struct bitrs{
 }BITRS;
 
 
+void buildRank(BITRS * br);
+uint buildRankSub(BITRS * br, uint ini,uint bloques);
+uint bselect(BITRS * br,uint x);
+
+
+
 BITRS * createBITRS( uint *bitarray, uint _n, char owner, uint _factor) {
-  BITRS * br =(BITRS *) malloc(sizeof(struct sBITRS));
+  BITRS * br =(BITRS *) malloc(sizeof(struct bitrs));
   br->data=bitarray;
   br->owner = owner;
   br->n=_n;
@@ -28,6 +35,9 @@ BITRS * createBITRS( uint *bitarray, uint _n, char owner, uint _factor) {
   buildRank(br);
   return br;
 }
+
+
+
 
 
 void destroyBITRS(BITRS *br) {
@@ -136,7 +146,7 @@ BITRS * createBITRSFile(FILE *f, int *error) {
 */
 
 uint spaceRequirementInBits(BITRS * br) {
-  return (br->owner?br->n:0)+(br->n/br->s)*sizeof(uint)*8 +sizeof(struct sBITRS)*8;
+  return (br->owner?br->n:0)+(br->n/br->s)*sizeof(uint)*8 +sizeof(struct bitrs)*8;
 }
 
 uint lenght_in_bits(BITRS * br) { return br->n; };

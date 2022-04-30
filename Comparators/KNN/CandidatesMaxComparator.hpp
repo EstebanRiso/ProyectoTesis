@@ -1,3 +1,6 @@
+#ifndef CANDIDATESMAXCOMPARATOR_HPP
+#define CANDIDATESMAXCOMPARATOR_HPP
+
 #include "KNNElementQueue.hpp"
 
 
@@ -13,3 +16,5 @@ int compareKNNEQ1(KNNElementQueue o1, KNNElementQueue o2){
 
     return 0;
 }
+
+#endif

@@ -20,7 +20,7 @@ class Rectangle{
     
     public:
 
-        Rectangle();//constructor default, no se va usar, pero es para solucionar errores relacionados
+        Rectangle(){};//constructor default, no se va usar, pero es para solucionar errores relacionados
 
         Rectangle(Point *S, Point *T){
             this->S=S;
@@ -36,7 +36,7 @@ class Rectangle{
         }
 
         bool Contains(Point point){
-            return NULL;
+            return point.equalsxy(max(*S, min(*T, point)));;
         }
         
 };

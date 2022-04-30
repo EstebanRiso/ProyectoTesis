@@ -1,5 +1,6 @@
 #ifndef KNNELEMENTQUEUE_HPP
 #define KNNELEMENTQUEUE_HPP
+#include "defines.hpp"
 #include "Rectangle.hpp"
 
 
@@ -10,24 +11,26 @@ class KNNElementQueue{
 
     private:
         uint pos;
-        Rectangle cuadrant;
+        Rectangle *cuadrant;
         int distance;
         int level;
     
     public:
 
-        KNNElementQueue(uint pos, Rectangle cuadrant, int distance, int level){
+        KNNElementQueue(uint pos, Rectangle *cuadrant, int distance, int level){
             this->pos=pos;
             this->cuadrant=cuadrant;
             this->distance=distance;
             this->level=level;
         }
+
+        ~KNNElementQueue(){}
        
         int getLevel(){
             return level;
         }
 
-        int long getPos(){
+        uint getPos(){
             return pos;
         }
 
@@ -36,7 +39,7 @@ class KNNElementQueue{
         }
 
         Rectangle getCuadrant(){
-            return cuadrant;
+            return *cuadrant;
         }
 
         void toString(){

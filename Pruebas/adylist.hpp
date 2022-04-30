@@ -31,7 +31,7 @@ ALREP * loadAdyacencyList(char * basename){
 	// Apertura del archivo
 	char *filename = (char *) malloc(sizeof(char)*(strlen(basename)+8));
 	strcpy(filename,basename);
-	strcat(filename,".text");
+	strcat(filename,".rbfull");
 	FILE * ft = fopen(filename,"r");
 	// Declaración de estructura
 	ALREP * list;
