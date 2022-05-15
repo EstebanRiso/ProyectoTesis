@@ -11,13 +11,13 @@ class KNNElementQueue{
 
     private:
         uint pos;
-        Rectangle *cuadrant;
+        Rectangle cuadrant;
         int distance;
         int level;
     
     public:
 
-        KNNElementQueue(uint pos, Rectangle *cuadrant, int distance, int level){
+        KNNElementQueue(uint pos, Rectangle cuadrant, int distance, int level){
             this->pos=pos;
             this->cuadrant=cuadrant;
             this->distance=distance;
@@ -29,6 +29,7 @@ class KNNElementQueue{
         int getLevel(){
             return level;
         }
+        
 
         uint getPos(){
             return pos;
@@ -39,7 +40,7 @@ class KNNElementQueue{
         }
 
         Rectangle getCuadrant(){
-            return *cuadrant;
+            return cuadrant;
         }
 
         void toString(){

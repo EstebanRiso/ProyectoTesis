@@ -9,19 +9,19 @@
 
 typedef struct matrixRep{
     BITRS * btl;
-    uint btl_len;               //Numero de bits de T:L
-    uint bt_len;                //Numero de bits de T
-    int maxLevel;           //Nivel maximo del arbol
-    uint numberOfNodes;
-    ulong numberOfEdges;
-    uint * div_level_table;
-    uint * info;
-    uint * info2[2];
-    uint * element;
-    uint * basex;
-    uint * basey;
-    int iniq;
-    int finq;
+    uint btl_len;               //Numero de bits de T:L 4
+    uint bt_len;                //Numero de bits de T   4
+    int maxLevel;           //Nivel maximo del arbol    4 
+    uint numberOfNodes;     // 4
+    ulong numberOfEdges;    // 8 
+    uint * div_level_table;  // 4    4+4+4+4+8+4+4+4+4+4+4+4+4
+    uint * info; // 4
+    uint * info2[2]; // 4 
+    uint * element;  //4 
+    uint * basex; // 4 
+    uint * basey; // 4 
+    int iniq; // 4 
+    int finq; // 4
 }MREP;
 
 typedef struct edgeinfo{
@@ -256,6 +256,7 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 			
 			for(z=offsetL;z<offsetR-1;z++)
 				if(tedges[z].kval>tedges[z+1].kval){
+					cout<<"SE VA PLANTEAR UN ERROR"<<endl;
 					fprintf(stderr,"error: %d\n",z);
 					exit(-1);
 				}
@@ -264,12 +265,13 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 		queuecont = conttmp;
 	}
 
-	cout<<"bits"<<bits[0]<<endl;
-	cout<<"bits"<<bits[1]<<endl;
-	cout<<"bits"<<bits[2]<<endl;
-	cout<<"bits"<<bits[3]<<endl;
-	cout<<"bits"<<bits[4]<<endl;
-	cout<<"bits"<<bits[5]<<endl;
+	
+	cout<<"bits"<<bits[41]<<endl;
+	cout<<"bits"<<bits[42]<<endl;
+	cout<<"bits"<<bits[43]<<endl;
+	cout<<"bits"<<bits[44]<<endl;
+	cout<<"bits"<<bits[45]<<endl;
+	cout<<"bits"<<bits[46]<<endl;
 
 	rep->bt_len = postotal;
 
@@ -306,6 +308,14 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 		}
 		q = (QUEUEOFFCONS *)RemoveItemOFFCONS(q);
 	}
+	
+	cout<<endl;
+	cout<<"bits"<<bits_BTL[41]<<endl;
+	cout<<"bits"<<bits_BTL[42]<<endl;
+	cout<<"bits"<<bits_BTL[43]<<endl;
+	cout<<"bits"<<bits_BTL[44]<<endl;
+	cout<<"bits"<<bits_BTL[45]<<endl;
+	cout<<"bits"<<bits_BTL[46]<<endl;
 
 	free(counterK);
 	free(boundariesK);
@@ -340,11 +350,16 @@ void saveRepresentation(MREP * rep, char * basename){
 	uint s,n, n2;
 	s=rep->btl->s;
 	n=rep->btl_len;
+	uint read;
+	cout<<"valor de rep->btl->data[45]"<<rep->btl->data[45] <<endl;
+	cout<<"valor de rep->btl->data[46]"<<rep->btl->data[46]<<endl;
 	n2 = rep->btl_len;
+
+	cout<<"n2/W+1:"<<rep->btl_len/W+1<<endl;
 	fwrite (&(rep->btl_len),sizeof(uint),1,ft);
 	fwrite (&(rep->bt_len),sizeof(uint),1,ft);
 	fwrite (&(rep->btl->factor),sizeof(uint),1,ft);
-	fwrite (rep->btl->data,sizeof(uint),n2/W+1,ft);
+	fwrite (rep->btl->data,sizeof(uint),n2,ft);
 	fwrite (rep->btl->Rs,sizeof(uint),n/s+1,ft);
 	fclose(ft);
 	free(filename);
@@ -354,7 +369,9 @@ MREP * loadRepresentation(char * basename){
 	MREP * rep;
 	int i;
 	rep = (MREP *) malloc(sizeof(struct matrixRep));
+	cout<<"sizeof struct matrixRep"<<sizeof(struct matrixRep)<<endl;
 	rep->btl = (BITRS *) malloc(sizeof(struct bitrs));
+	cout<<"sizeof struct bitrs"<<sizeof(struct bitrs)<<endl;
 	char *filename = (char *) malloc(sizeof(char)*(strlen(basename)+4));
 	strcpy(filename,basename);
 	strcat(filename,".kt");
@@ -375,10 +392,16 @@ MREP * loadRepresentation(char * basename){
 	uint n= rep->btl->n;
 	uint n2 = rep->btl_len;
 	rep->btl->integers = n/W;
-	rep->btl->data= (uint *) malloc(sizeof( uint) *(n2/W+1));
-	
 
-	fread (rep->btl->data,sizeof(uint),n2/W+1,ft);
+	cout<<"LARGO DE BTL DATA:"<< sizeof(uint)*(n2/W+1)<<endl;
+	rep->btl->data= (uint *) malloc(sizeof(uint) *(n2));
+	cout<<"n2/W+1:"<<n2/W+1<<endl;
+	fread (rep->btl->data,sizeof(uint),n2,ft);
+
+	cout<<"rep->btl->data[45]:"<<rep->btl->data[45]<<endl;
+	cout<<"rep->btl->data[46]:"<<rep->btl->data[46]<<endl;
+
+
 	rep->btl->owner = 1;
 	rep->btl->Rs=(uint*)malloc(sizeof(uint)*(n/s+1));
 	fread (rep->btl->Rs,sizeof(uint),n/s+1,ft) ;
@@ -737,7 +760,7 @@ uint compactCheckLinkQuery(MREP * rep, uint p, uint q){
 
 	uint posInf;
 	uint prelat, qrelat;
-	int i, node=0,div_level;
+	uint i, node=0,div_level;
 
 	for(i=0;i<rep->maxLevel;i++){
 		
@@ -756,9 +779,9 @@ uint compactCheckLinkQuery(MREP * rep, uint p, uint q){
 		q=q%div_level;
 	}
 	
-	posInf = node;
-			if(bitget(rep->btl->data,posInf+(q+(p)*K))){
-					return 1;
+		posInf = node;
+		if(bitget(rep->btl->data,posInf+(q+(p)*K))){
+			return 1;
 		}
 			
 	return 0;	

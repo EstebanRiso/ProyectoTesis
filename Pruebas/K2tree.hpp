@@ -13,6 +13,9 @@ class K2Tree{
 
     MREP* tl;
 
+
+  
+
     public:
     K2Tree();
     ~K2Tree(){};
@@ -26,8 +29,12 @@ class K2Tree{
         return tl->btl;
     }
 
+    uint btlLenght(){
+        return tl->btl_len;
+    }
+
     int getNodes(){
-      return 1;
+      return tl->numberOfNodes;
     }
 
     int getK(){
@@ -37,6 +44,16 @@ class K2Tree{
     int getHeight(){
       return tl->maxLevel;
     }
+
+    bool checklink(uint i, uint j){
+      if(compactCheckLinkQuery(tl,i,j)==0){
+        return false;
+      }
+      return true;
+    }
+
+
+
 };
 
 #endif

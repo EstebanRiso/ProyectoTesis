@@ -98,6 +98,7 @@ int main(int argc, char * argv[]){
 			cedg++;
 		}
 	}
+	cout<<"TODAVIA NO HAY ERROR"<<endl;
 	
 	MREP * rep = compactCreateKTree(xedges, yedges, cantNode,cantEdge,max_level);
 	

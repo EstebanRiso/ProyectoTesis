@@ -5,12 +5,12 @@
 
 
 typedef struct bitrs{
-    uint *data;
-    char owner; //x definir
-    uint integers;
-    uint factor,b,s;
-    uint *Rs;  					//superblock array
-    uint n;     
+    uint *data;  // 4
+    char owner; //x definir 1
+    uint integers; // 4
+    uint factor,b,s; // 4+4+4
+    uint *Rs;  			//4		//superblock array
+    uint n;     //4     5+24=29
 }BITRS;
 
 
@@ -80,7 +80,7 @@ uint buildRankSub(BITRS * br, uint ini,uint bloques) {
 uint rank1(BITRS * br, uint i) {
   uint a;
   if(i+1==0) return 0;
-  ++i;
+  ++i; 
   uint resp=br->Rs[i/br->s];
   uint aux=(i/br->s)*(br->factor);
   for (a=aux;a<i/W;a++)
@@ -94,8 +94,24 @@ uint isBitSet(BITRS * br, uint i) {
   if(i<0){
     return 0u;
   }
-  return (1u << (i % W)) & br->data[i/W];
+  uint resultado;
+  uint primera_parte=(1u << (i%W));
+  uint segunda_parte=br->data[i/W];
+
+  resultado = (1u << (i % W)) & br->data[i/W];
+
+  /*cout<<"i/W:"<< i/W <<endl;
+  cout<<"i%W:"<< i%W <<endl;
+  cout<<"1u:"<< 1u <<endl;
+  cout<<"(1u << (i%W))="<< primera_parte <<endl;
+  cout<<"br->data[i/W]="<< segunda_parte <<endl;
+  cout<<"(1u << (i%W)) & br->data[i/W] ="<< resultado <<endl;
+  cout<<endl;*/
+
+  return resultado;
 }
+
+
 
 /*
 int save(BITRS * br, FILE *f) {

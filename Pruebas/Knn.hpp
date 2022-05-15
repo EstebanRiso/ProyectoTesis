@@ -7,12 +7,16 @@
 #ifndef KNN_HPP
 #define KNN_HPP
 
+
+
+
 class KNN{
     private:
 
         int k;
         BITRS *TL;
         //BitArrayRS;
+        string bitarray;
         int ALTURA;
         int CANTIDADHIJOS;
         K2Tree *K2TREE;
@@ -24,14 +28,10 @@ class KNN{
 
 
         Point traductionPointQ(Point q) {
-            return  Point(q.getId(), q.getY(),abs(q.getX() - K2TREE->getNodes()) + 1, q.getDistance());
+            return  Point(q.getY(),abs(q.getX() - K2TREE->getNodes()) + 1);
         }
 
         bool isCandidate(priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> Cand, int k, int minD){
-           cout<<"ME ADENTRE EN IS CANDIDATE"<<endl;
-           cout<<"el size de cand es:"<<Cand.size()<<endl;
-
-            
            int dist=0;
         
            if(Cand.size()!=0){
@@ -40,7 +40,7 @@ class KNN{
                dist=objs.getDistance();
               }
            }
-           cout<<"ASIGNE EN ANTERIORIDAD UN ELEMENTO"<<endl;
+        
           
            return (Cand.size()< k || minD < dist);
 
@@ -51,65 +51,45 @@ class KNN{
         }
 
 
-        void evaluateCandidates(KNNElementQueue tmp, priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> pQueue, priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> Cand, int k, Point q){
-            
-            cout<<"ESTOY EN EL METODO EVALUATE CANDIDATE"<<endl;
+        void evaluateCandidates(KNNElementQueue tmp, priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> &pQueue, priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> &Cand, int k, Point q){
+
             int accumX=0;
             int accumY=0;
-            bool flag = false;
             uint posHijo= tmp.getPos();
             Point S=tmp.getCuadrant().getS();
             Point T=tmp.getCuadrant().getT();
             int secuence= getSecuence(tmp);
-            cout<<"esta es la secuence:"<<secuence<<endl;
+
             Rectangle temp;
-
-            cout<<"VOY A DENTRARME EN UN IF"<<endl;
-            if(tmp.getLevel()== K2TREE->getHeight()){
-
-                cout<<"ESTOY EN EL IF"<<endl;
+            if(tmp.getLevel() == K2TREE->getHeight()){
                 accumX = S.getX();
                 accumY = T.getY();  
-                flag=true;
             }else{
-                cout<<"ESTOY EN EL ELSE"<<endl;
                 accumX = S.getX();
-
-                cout<<S.getX()<<endl;
-                cout<<T.getY()<<endl;
-
                 accumY = T.getY() - secuence;
-
-                cout<<accumY<<endl;
             }
             
-            cout<<"la cantidad de hijos es:"<<CANTIDADHIJOS<<endl;
-
             for(int i=1;i<=CANTIDADHIJOS;i++){
-                cout<<"ciclo for"<<endl;
+
                 if(accumX >T.getX()){
                     accumY=accumY-secuence-1;
                     accumX=S.getX();
                 }
-                cout<<"voy a entrar en ese if de bitaccess"<<endl;
-                if( bitaccess(TL->data,posHijo) != 0){
-                    cout<<"he entrado"<<endl;
+                if(isBitSet(TL,posHijo)!=0){
                     temp= Rectangle(new Point(accumX,accumY),new Point(accumX+secuence,accumY+secuence));
-                    cout<<"voy a entrar en mindist"<<endl;
                     int minD = minDist(q,temp);
-                    cout<<"termino el mindist y el resultado es:"<<minD<<endl;
+                  
                     if(isCandidate(Cand,k,minD)){
-                        cout<<"ESTAMOS EN IS CANDIDATE"<<endl;
-                        pQueue.push(getCandidate(temp,posHijo,tmp.getLevel()+1,minD));
+                        KNNElementQueue a=getCandidate(temp,posHijo,tmp.getLevel()+1,minD);
+                        pQueue.push(a);
                     }
                 }
-            }
-            accumX=accumX+secuence+1;
-            posHijo++;
+                accumX=accumX+secuence+1;
+                posHijo++;
+            }           
         }
-
-        KNNElementQueue getCandidate(Rectangle tmp, uint posHijo, int level, int minD) {
-        return  KNNElementQueue((rank1(TL,posHijo) * (K * K)), &tmp, minD, level);
+        KNNElementQueue getCandidate(Rectangle temp, uint posHijo, int level, int minD) {
+            return  KNNElementQueue((rank1(TL,posHijo) * (K * K)), temp, minD, level);
         }
 
         int getSecuence(KNNElementQueue tmp){
@@ -118,16 +98,13 @@ class KNN{
 
         int minDist( Point p, Rectangle R){
 
-            cout<<"entré en mindist"<<endl;
 
             int R1=0;
             int R2=0;
-            cout<<"voy a entrar en un if de mindist"<<endl;
+       
             if(R.Contains(p)){
-                cout<<"entre en el if de mindist"<<endl;
                 return 0;
             } else{
-                cout<<"entre en el else de mindist"<<endl;
                 if(p.getX() < R.getS().getX()){
                     R1=R.getS().getX();
                 } else{
@@ -148,7 +125,7 @@ class KNN{
                 }
             }
 
-            cout<<"asignar los valores de mindist"<<endl;
+            cantDistanceCalculation++;
             int value1 = p.getX() - R1;
             int value2 = p.getY() - R2;
 
@@ -157,7 +134,7 @@ class KNN{
 
 
     public:
-
+        
 
         KNN(K2Tree *k2){
             this->K2TREE=k2;
@@ -169,28 +146,75 @@ class KNN{
 
         ~KNN(){}
 
+        void imprimir(priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> &p){
+            priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> resultado=p;
+                cout<<"pQueue"<<endl<<endl;
+
+                while(!resultado.empty()){
+                    KNNElementQueue a =resultado.top();
+                     cout<<a.getDistance()<<" ";
+                    resultado.pop();
+                }
+                cout<<endl;
+
+
+                priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> resultado3=p;
+                
+                cout<<endl<<"S:"<<endl;
+
+                while(!resultado3.empty()){
+                    KNNElementQueue a =resultado3.top();
+                     cout <<"X:"<<a.getCuadrant().getS().getX()<< " ";
+                     cout <<"Y:"<<a.getCuadrant().getS().getY()<< " "<<endl;
+                    resultado3.pop();
+                }
+
+
+                cout<<endl;
+
+
+                priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> resultado2=p;
+                
+                cout<<"T:"<<endl;
+
+                while(!resultado2.empty()){
+                    KNNElementQueue a =resultado2.top();
+                     cout <<"X:"<<a.getCuadrant().getT().getX()<< " ";
+                     cout <<"Y:"<<a.getCuadrant().getT().getY()<< " "<<endl;
+                    resultado2.pop();
+                }
+
+                cout<<endl;
+                
+        }
+        
         priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> findNNQ(int k, Point q){
 
-            cout<<"ESTOY ADENTRO DEL METODO"<<endl;
+            char *dato;
+            uint data;
+            
+            
 
-            // almacena el 
+            //q=traductionPointQ(q);
             int dist = -1;
             uint diss=0;
 
             Rectangle quad= Rectangle( new Point(1,1) , new Point(K2TREE->getNodes(),K2TREE->getNodes()));
-            KNNElementQueue e= KNNElementQueue(diss,&quad,minDist(q,quad),1);
+            KNNElementQueue e= KNNElementQueue(diss,quad,minDist(q,quad),1);
 
-            pQueue.push(e); 
+            pQueue.push(e);
+            int cantidad_ciclos=0;
 
             while(!pQueue.empty()){
-                KNNElementQueue tmp= pQueue.top();
-                cout<<tmp.getDistance()<<endl;
-                pQueue.pop();
-                cout<<"a punto de adentrarme en algo"<<endl;
 
+                imprimir(pQueue);
+          
+                KNNElementQueue tmp= pQueue.top();
+                pQueue.pop();
+                //imprimir(pQueue);
                 if(candidates.size()!=0){ //identificar si tiene o no elementos;
                     KNNElementQueue obj= candidates.top();
-                    cout<<"estoy en el if"<<endl;
+                    
                     dist=obj.getDistance();
                 }
                 if((candidates.size()==k)&&(tmp.getDistance() >=dist)){
@@ -207,15 +231,11 @@ class KNN{
                         }
                     }
                 } else {
-                    cout<<"VOY A IR A EVALUATE CANDIDATE"<<endl;
-                    evaluateCandidates(tmp,pQueue, candidates, k, q);
+                        evaluateCandidates(tmp,pQueue, candidates, k, q);
                 }
             }
-            return candidates;
+            return candidates;  
         }
-
-
-
 
    
         int getCantDistanceCalculations(){
