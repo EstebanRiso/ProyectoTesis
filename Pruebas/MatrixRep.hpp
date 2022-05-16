@@ -177,13 +177,11 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 	uint * bits;
 	BITRS *BTL;
 	
-	cout<<"tamano"<<sizeof(uint)*((nedges*maxl*K*K+W-1)/W)<<endl;
 
 	uint * bits_BTL=(uint *) malloc(sizeof(uint)*((nedges*maxl*K*K+W-1)/W));
 	for(i=0;i<((nedges*maxl*K*K+W-1)/W);i++)
 		bits_BTL[i]=0;
 	
-	cout<<"imprimir:"<<(nedges*maxl*K*K+W-1)/W<<endl;
 	
 	bits = bits_BTL;
 
@@ -218,11 +216,6 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 				if(boundariesK[j+1]!=boundariesK[j]){
 					conttmp++;
 					q=AddItemOFFCONS(q,boundariesK[j],boundariesK[j+1]);
-
-					cout<<"bits:"<<*bits<<"| postotal:"<<postotal<<endl;
-					cout<<"p/W:"<< postotal/W <<"| p%W:"<< postotal%W<<endl;
-					cout<<"bitsetting:"<<bitset(bits,postotal)<<endl;					
-
 					bitset(bits,postotal);					
 				}
 				postotal++;
@@ -265,14 +258,6 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 		queuecont = conttmp;
 	}
 
-	
-	cout<<"bits"<<bits[41]<<endl;
-	cout<<"bits"<<bits[42]<<endl;
-	cout<<"bits"<<bits[43]<<endl;
-	cout<<"bits"<<bits[44]<<endl;
-	cout<<"bits"<<bits[45]<<endl;
-	cout<<"bits"<<bits[46]<<endl;
-
 	rep->bt_len = postotal;
 
 	uint counttotal=0;
@@ -309,13 +294,6 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 		q = (QUEUEOFFCONS *)RemoveItemOFFCONS(q);
 	}
 	
-	cout<<endl;
-	cout<<"bits"<<bits_BTL[41]<<endl;
-	cout<<"bits"<<bits_BTL[42]<<endl;
-	cout<<"bits"<<bits_BTL[43]<<endl;
-	cout<<"bits"<<bits_BTL[44]<<endl;
-	cout<<"bits"<<bits_BTL[45]<<endl;
-	cout<<"bits"<<bits_BTL[46]<<endl;
 
 	free(counterK);
 	free(boundariesK);
@@ -351,15 +329,37 @@ void saveRepresentation(MREP * rep, char * basename){
 	s=rep->btl->s;
 	n=rep->btl_len;
 	uint read;
-	cout<<"valor de rep->btl->data[45]"<<rep->btl->data[45] <<endl;
-	cout<<"valor de rep->btl->data[46]"<<rep->btl->data[46]<<endl;
-	n2 = rep->btl_len;
 
-	cout<<"n2/W+1:"<<rep->btl_len/W+1<<endl;
 	fwrite (&(rep->btl_len),sizeof(uint),1,ft);
 	fwrite (&(rep->bt_len),sizeof(uint),1,ft);
 	fwrite (&(rep->btl->factor),sizeof(uint),1,ft);
-	fwrite (rep->btl->data,sizeof(uint),n2,ft);
+
+	cout<<"write of btl_len"<<&(rep->btl_len)<<endl;
+	cout<<"write of factor:"<<&(rep->btl->factor)<<endl;
+
+	
+
+	
+	n2 = rep->btl_len;
+
+	for(int i=0;i<(n2/W);i++){
+	 cout<<"rep->btl->data["<<i<<"]"<<rep->btl->data[i]<<endl;
+	}
+
+	uint *a=rep->btl->data;
+	for(int i=0;i<(n2/W);i++){
+	 cout<<&(*(a+i))<<" ";
+	 fwrite(&(*(a+i)),sizeof(*a),1,ft);
+	}
+	
+	cout<<endl;
+
+	for(int i=0;i<(n2/W);i++){
+	 cout<<(*(a+i))<<" pos:"<<i<<" ";
+	}
+
+	cout<<endl;
+
 	fwrite (rep->btl->Rs,sizeof(uint),n/s+1,ft);
 	fclose(ft);
 	free(filename);
@@ -367,6 +367,7 @@ void saveRepresentation(MREP * rep, char * basename){
 
 MREP * loadRepresentation(char * basename){
 	MREP * rep;
+
 	int i;
 	rep = (MREP *) malloc(sizeof(struct matrixRep));
 	cout<<"sizeof struct matrixRep"<<sizeof(struct matrixRep)<<endl;
@@ -378,9 +379,9 @@ MREP * loadRepresentation(char * basename){
 	cout<<"filename:"<<filename<<endl;
 	FILE * ft = fopen(filename,"r");
 	fread(&(rep->numberOfNodes),sizeof(uint),1,ft);
+	cout<<"rep->numberOfNodes"<<rep->numberOfNodes<<endl;
 	fread(&(rep->numberOfEdges),sizeof(ulong),1,ft);
 	fread(&(rep->maxLevel),sizeof(uint),1,ft);
-
 	fread (&(rep->btl_len),sizeof(uint),1,ft);  
 	fread (&(rep->bt_len),sizeof(uint),1,ft);
 	rep->btl->b=32;    
@@ -393,14 +394,27 @@ MREP * loadRepresentation(char * basename){
 	uint n2 = rep->btl_len;
 	rep->btl->integers = n/W;
 
-	cout<<"LARGO DE BTL DATA:"<< sizeof(uint)*(n2/W+1)<<endl;
-	rep->btl->data= (uint *) malloc(sizeof(uint) *(n2));
-	cout<<"n2/W+1:"<<n2/W+1<<endl;
-	fread (rep->btl->data,sizeof(uint),n2,ft);
+	
+	uint *a=rep->btl->data;
+	cout<<"voy al for"<<endl;
+	for(int i=0;i<(n2/W);i++){
+	 fread(&(*(a+i)),sizeof(*a),1,ft);
+	 cout<<"direcciones de memoria de &*(a+"<<i<<")"<<&(*(a+i))<<endl;
+	 rep->btl->data[i]=*(a+i);
+	}
 
-	cout<<"rep->btl->data[45]:"<<rep->btl->data[45]<<endl;
-	cout<<"rep->btl->data[46]:"<<rep->btl->data[46]<<endl;
+	for(int i=0;i<(n2/W);i++){
+	 cout<<"rep->btl->data["<<i<<"]"<<rep->btl->data[i]<<endl;
+	}
 
+	/*rep->btl->data= (uint *) malloc(sizeof(uint) *(n2/W+1));
+
+	fread (rep->btl->data,sizeof(uint),n2/W+1,ft);
+   
+  	// 7B8A78  % 7b7a70    8,096,376  8,092,272
+	for(int i=0;i<(n2/W+1)+1;i++)
+	cout<<"rep->btl->data["<<i<<"]:"<<rep->btl->data[i]<<endl;
+	*/
 
 	rep->btl->owner = 1;
 	rep->btl->Rs=(uint*)malloc(sizeof(uint)*(n/s+1));
