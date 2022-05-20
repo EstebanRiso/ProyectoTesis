@@ -1,5 +1,6 @@
 #include "Knn.hpp"
 #include <fstream>
+#include <chrono>
 
 
 bool cmp(pair<int, int> & a, pair<int, int> & b){
@@ -12,6 +13,12 @@ bool cmp(pair<int, int> & a, pair<int, int> & b){
 
 
 int main(int argc, char * argv[]){
+	
+
+
+	clock_t start, end;
+
+	start=clock();
 
     if(argc < 2){
 		printf("%s <PATH>\n", argv[0]);
@@ -101,20 +108,12 @@ int main(int argc, char * argv[]){
 
 
 
-
-
-
-
-
-
-
-
     K2Tree k2=K2Tree(rep);
 
     KNN knn=KNN(&k2);
     
     try{
-        priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> resultado=knn.findNNQ(4,Point(18,8));
+        priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> resultado=knn.findNNQ(1,Point(1,3));
         cout<<"RESULTADO FINAL:"<<endl;
 
         priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> resultado2=resultado;
@@ -134,7 +133,15 @@ int main(int argc, char * argv[]){
                 cout <<"X:"<<a.getCuadrant().getT().getX()<< " ";
                 cout <<"Y:"<<a.getCuadrant().getT().getY()<< " "<<endl;
                 resultado.pop();
-    }
+    	}
+
+		cout<<"cantidad nodos"<<k2.getNodes()<<endl;
+
+
+		end=clock();
+
+		cout<<"tiempo al ejecutar: "<<end-start<<" ms"<<endl;
+
     }
     catch(error_code e){
         cerr<< e.message() << endl;

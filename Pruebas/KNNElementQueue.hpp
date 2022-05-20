@@ -12,12 +12,12 @@ class KNNElementQueue{
     private:
         uint pos;
         Rectangle cuadrant;
-        int distance;
+        uint distance;
         int level;
     
     public:
 
-        KNNElementQueue(uint pos, Rectangle cuadrant, int distance, int level){
+        KNNElementQueue(uint pos, Rectangle cuadrant, uint distance, int level){
             this->pos=pos;
             this->cuadrant=cuadrant;
             this->distance=distance;

@@ -14,8 +14,8 @@ typedef struct matrixRep{
     int maxLevel;           //Nivel maximo del arbol    4 
     uint numberOfNodes;     // 4
     ulong numberOfEdges;    // 8 
-    uint * div_level_table;  // 4    4+4+4+4+8+4+4+4+4+4+4+4+4
-    uint * info; // 4
+    uint * div_level_table;  // 4    4+4+4+4+8+4+4+4+4+4+4+4+4  
+    uint * info; // 4				
     uint * info2[2]; // 4 
     uint * element;  //4 
     uint * basex; // 4 
@@ -311,6 +311,36 @@ MREP * compactCreateKTree(uint * xedges, uint *yedges, uint numberOfNodes,ulong 
 }
 
 
+void saveRepresentation2(MREP * rep, char * basename){
+	if(rep == NULL){
+		printf("Error! La estructura a guardar no existe\n");
+		return;
+	}
+
+	char *filename = (char *) malloc(sizeof(char)*(strlen(basename)+4));
+	strcpy(filename,basename);
+	strcat(filename,".kt");
+	FILE * ft = fopen(filename,"w");
+	fwrite(&(rep->numberOfNodes),sizeof(uint),1,ft);
+	fwrite(&(rep->numberOfEdges),sizeof(ulong),1,ft);
+	fwrite(&(rep->maxLevel),sizeof(uint),1,ft);
+	uint s,n, n2;
+	s=rep->btl->s;
+	n=rep->btl_len;
+	uint read;
+
+	fwrite (&(rep->btl_len),sizeof(uint),1,ft);
+	fwrite (&(rep->bt_len),sizeof(uint),1,ft);
+	fwrite (&(rep->btl->factor),sizeof(uint),1,ft);
+
+	fwrite (rep->btl->Rs,sizeof(uint),n/s+1,ft);
+	fclose(ft);
+	free(filename);
+}
+
+
+
+
 
 void saveRepresentation(MREP * rep, char * basename){
 	if(rep == NULL){
@@ -370,16 +400,12 @@ MREP * loadRepresentation(char * basename){
 
 	int i;
 	rep = (MREP *) malloc(sizeof(struct matrixRep));
-	cout<<"sizeof struct matrixRep"<<sizeof(struct matrixRep)<<endl;
 	rep->btl = (BITRS *) malloc(sizeof(struct bitrs));
-	cout<<"sizeof struct bitrs"<<sizeof(struct bitrs)<<endl;
 	char *filename = (char *) malloc(sizeof(char)*(strlen(basename)+4));
 	strcpy(filename,basename);
 	strcat(filename,".kt");
-	cout<<"filename:"<<filename<<endl;
 	FILE * ft = fopen(filename,"r");
 	fread(&(rep->numberOfNodes),sizeof(uint),1,ft);
-	cout<<"rep->numberOfNodes"<<rep->numberOfNodes<<endl;
 	fread(&(rep->numberOfEdges),sizeof(ulong),1,ft);
 	fread(&(rep->maxLevel),sizeof(uint),1,ft);
 	fread (&(rep->btl_len),sizeof(uint),1,ft);  
@@ -394,31 +420,9 @@ MREP * loadRepresentation(char * basename){
 	uint n2 = rep->btl_len;
 	rep->btl->integers = n/W;
 
-	
-	uint *a=rep->btl->data;
-	cout<<"voy al for"<<endl;
-	for(int i=0;i<(n2/W);i++){
-	 fread(&(*(a+i)),sizeof(*a),1,ft);
-	 cout<<"direcciones de memoria de &*(a+"<<i<<")"<<&(*(a+i))<<endl;
-	 rep->btl->data[i]=*(a+i);
-	}
-
-	for(int i=0;i<(n2/W);i++){
-	 cout<<"rep->btl->data["<<i<<"]"<<rep->btl->data[i]<<endl;
-	}
-
-	/*rep->btl->data= (uint *) malloc(sizeof(uint) *(n2/W+1));
-
-	fread (rep->btl->data,sizeof(uint),n2/W+1,ft);
-   
-  	// 7B8A78  % 7b7a70    8,096,376  8,092,272
-	for(int i=0;i<(n2/W+1)+1;i++)
-	cout<<"rep->btl->data["<<i<<"]:"<<rep->btl->data[i]<<endl;
-	*/
-
 	rep->btl->owner = 1;
 	rep->btl->Rs=(uint*)malloc(sizeof(uint)*(n/s+1));
-	fread (rep->btl->Rs,sizeof(uint),n/s+1,ft) ;
+	fread (rep->btl->Rs,sizeof(uint),n/s+1,ft);
 
 	rep->info = (uint *)malloc(sizeof(uint)*MAX_INFO);
 	rep->element = (uint *)malloc(sizeof(uint)*MAX_INFO);	

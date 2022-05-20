@@ -1,5 +1,4 @@
 #include "transformador.hpp"
-#include <Windows.h>
 #include <unistd.h>
 
 bool cmp(pair<int, int> & a, pair<int, int> & b){

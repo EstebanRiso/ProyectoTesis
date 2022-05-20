@@ -61,10 +61,6 @@ void bitmap(MREP *a){
     cout<<endl;
     cout<<endl;
 
-    for(uint i=0; i<a->btl_len; i++){
-        b=isBitSet(a->btl, i)?1:0;
-        cout<<b;
-    }
 
     cout<<endl;
     

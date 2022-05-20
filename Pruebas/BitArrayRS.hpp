@@ -1,5 +1,6 @@
 #include "defines.hpp"
 #include "basic.hpp"
+#include "vector"
 #ifndef BITARRAYRS_HPP
 #define BITARRAYRS_HPP
 
@@ -11,6 +12,7 @@ typedef struct bitrs{
     uint factor,b,s; // 4+4+4
     uint *Rs;  			//4		//superblock array
     uint n;     //4     5+24=29
+    std::vector<uint> dato;
 }BITRS;
 
 

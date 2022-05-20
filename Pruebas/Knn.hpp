@@ -58,7 +58,10 @@ class KNN{
             uint posHijo= tmp.getPos();
             Point S=tmp.getCuadrant().getS();
             Point T=tmp.getCuadrant().getT();
+            cout<<"tmp.getLevel()"<<tmp.getLevel()<<endl;
+            cout<<"K2TREE->getHeight()"<<K2TREE->getHeight()<<endl;
             int secuence= getSecuence(tmp);
+            cout<<"secuence:"<<secuence<<endl;
 
             Rectangle temp;
             if(tmp.getLevel() == K2TREE->getHeight()){
@@ -88,6 +91,7 @@ class KNN{
                 posHijo++;
             }           
         }
+        
         KNNElementQueue getCandidate(Rectangle temp, uint posHijo, int level, int minD) {
             return  KNNElementQueue((rank1(TL,posHijo) * (K * K)), temp, minD, level);
         }
@@ -195,8 +199,8 @@ class KNN{
             
             
 
-            //q=traductionPointQ(q);
-            int dist = -1;
+            q=traductionPointQ(q);
+            uint dist = -1;
             uint diss=0;
 
             Rectangle quad= Rectangle( new Point(1,1) , new Point(K2TREE->getNodes(),K2TREE->getNodes()));
@@ -206,8 +210,6 @@ class KNN{
             int cantidad_ciclos=0;
 
             while(!pQueue.empty()){
-
-                imprimir(pQueue);
           
                 KNNElementQueue tmp= pQueue.top();
                 pQueue.pop();
