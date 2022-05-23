@@ -28,6 +28,12 @@
     "**/.vscode/**"
   ],
   "files.associations": {
-    "new": "cpp"
+    "new": "cpp",
+    "iostream": "cpp",
+    "chrono": "cpp",
+    "queue": "cpp",
+    "vector": "cpp",
+    "ostream": "cpp",
+    "fstream": "cpp"
   }
 }

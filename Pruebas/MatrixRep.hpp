@@ -1,4 +1,5 @@
 #include "BitArrayRS.hpp"
+#include <fstream>
 #ifndef MATRIXREP_HPP
 #define MATRIXREP_HPP
 #define MAX_INFO 1024*1024+10
@@ -67,6 +68,58 @@ void destroyRepresentation(MREP * rep);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 QUEUEOFFCONS * finalQUEUEOFFCONS;
+
+
+vector<uint> getDatoVector(char* filename,fstream &f, uint integers){
+	
+
+	string fila=filename;
+	fila+=".dat";
+	uint dato;
+	vector<uint> vector;
+
+    f.open(fila,ios::in | ios::binary);
+
+    if(f.is_open()){
+		
+		for(int i=0;i<integers;i++){
+			f.read(reinterpret_cast<char *>(&dato),sizeof(uint));
+			vector.push_back(dato);
+		}
+
+    }
+    else{cout<<"no se pudo abrir"<<endl;}
+
+
+	return vector;
+}
+
+
+vector<uint> getRsVector(char* filename, fstream &f , uint &size){
+	
+
+	uint dato;
+	uint integers;
+	vector<uint> vector;
+
+    if(f.is_open()){
+
+		cout<<"abertura en funcion getRsVector"<<endl;
+		
+		for(int i=0;i<size;i++){
+			f.read(reinterpret_cast<char *>(&dato),sizeof(uint));
+			vector.push_back(dato);
+		}
+
+		cout<<"voy a cerrar el archivo"<<endl;
+		f.close();
+    }
+    else{cout<<"no se pudo abrir"<<endl;}
+
+
+	return vector;
+}
+
 
 
 
@@ -327,13 +380,11 @@ void saveRepresentation2(MREP * rep, char * basename){
 	uint s,n, n2;
 	s=rep->btl->s;
 	n=rep->btl_len;
-	uint read;
 
 	fwrite (&(rep->btl_len),sizeof(uint),1,ft);
 	fwrite (&(rep->bt_len),sizeof(uint),1,ft);
 	fwrite (&(rep->btl->factor),sizeof(uint),1,ft);
 
-	fwrite (rep->btl->Rs,sizeof(uint),n/s+1,ft);
 	fclose(ft);
 	free(filename);
 }
@@ -394,6 +445,23 @@ void saveRepresentation(MREP * rep, char * basename){
 	fclose(ft);
 	free(filename);
 }
+
+
+MREP * loadRepresentation2(char * basename){
+
+	MREP * rep = loadRepresentation(basename);
+
+	fstream f;
+	uint integers=rep->btl->integers;
+	rep->btl->dato=getDatoVector(basename,f,integers);
+	uint size=(rep->btl_len/rep->btl->s+1);
+	rep->btl->ers=getRsVector(basename,f,size);
+   
+	return rep;
+}
+
+
+
 
 MREP * loadRepresentation(char * basename){
 	MREP * rep;

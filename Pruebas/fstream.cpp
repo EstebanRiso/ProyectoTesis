@@ -103,8 +103,13 @@ int main(int argc, char * argv[]){
 	MREP * rep = compactCreateKTree(xedges, yedges, cantNode,cantEdge,max_level);
 
     uint *datos=rep->btl->data;
+	uint *rs=rep->btl->Rs;
     uint integers=rep->btl->integers;
     
+	uint s=rep->btl->s;
+	uint n=rep->btl_len;
+
+
     fstream f;
     char *filename=argv[1];
 
@@ -119,11 +124,19 @@ int main(int argc, char * argv[]){
     f.open(fila, ios::out | ios::binary |ios::trunc);
 
     if(f.is_open()){
-        f.write(reinterpret_cast<char *>(&integers),sizeof(uint));
         f.write(reinterpret_cast<char *>(datos),sizeof(uint)*(integers));
+		f.write(reinterpret_cast<char *>(rs),sizeof(uint)*(n/s+1));
         f.close();
     }
     else{cout<<"no se pudo abrir"<<endl;}
+
+
+	cout<<"viendo el data"<<endl;
+	for(int i=0;i<rep->btl->integers;i++){
+		cout<<rep->btl->data[i]<<" ";
+	}
+	cout<<endl;
+	cout<<"viendo el rs"<<endl;
 
  return 0;
 }

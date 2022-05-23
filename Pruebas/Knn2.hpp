@@ -4,8 +4,8 @@
 #include "KNNElementQueueComparator.hpp"
 #include "CandidatesMaxComparator.hpp"
 
-#ifndef KNN_HPP
-#define KNN_HPP
+#ifndef KNN2_HPP
+#define KNN2_HPP
 
 
 
@@ -75,7 +75,7 @@ class KNN{
                     accumY=accumY-secuence-1;
                     accumX=S.getX();
                 }
-                if(isBitSet2(TL,posHijo)!=0){
+                if(isBitSet(TL,posHijo)!=0){
                     temp= Rectangle(new Point(accumX,accumY),new Point(accumX+secuence,accumY+secuence));
                     int minD = minDist(q,temp);
                   
@@ -90,7 +90,7 @@ class KNN{
         }
         
         KNNElementQueue getCandidate(Rectangle temp, uint posHijo, int level, int minD) {
-            return  KNNElementQueue((rank1_v(TL,posHijo) * (K * K)), temp, minD, level);
+            return  KNNElementQueue((rank1(TL,posHijo) * (K * K)), temp, minD, level);
         }
 
         int getSecuence(KNNElementQueue tmp){
@@ -149,6 +149,7 @@ class KNN{
 
         void imprimir(priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> &p){
 
+            cout<<"abriendo knn2"<<endl;
             priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> resultado=p;
                 cout<<"pQueue"<<endl<<endl;
 
@@ -188,26 +189,29 @@ class KNN{
 
                 cout<<endl;
                 
+                
         }
         
         priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> findNNQ(int k, Point q){
             
             uint data;
+
             q=traductionPointQ(q);
             uint dist = -1;
             uint diss=0;
 
-           // Rectangle quad= Rectangle( new Point(1,1) , new Point(K2TREE->getNodes(),K2TREE->getNodes()));
             Rectangle quad= Rectangle( new Point(1,1) , new Point(K2TREE->getNodes(),K2TREE->getNodes()));
             KNNElementQueue e= KNNElementQueue(diss,quad,minDist(q,quad),1);
 
             pQueue.push(e);
             int cantidad_ciclos=0;
 
-            while(!pQueue.empty()){                
+            while(!pQueue.empty()){
+                
+              
                 KNNElementQueue tmp= pQueue.top();
-                imprimir(pQueue);
                 pQueue.pop();
+                //imprimir(pQueue);
                 if(candidates.size()!=0){ //identificar si tiene o no elementos;
                     KNNElementQueue obj= candidates.top();
                     
@@ -230,7 +234,6 @@ class KNN{
                         evaluateCandidates(tmp,pQueue, candidates, k, q);
                 }
             }
-            
             return candidates;  
         }
 

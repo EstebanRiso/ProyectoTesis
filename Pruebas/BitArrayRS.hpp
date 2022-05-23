@@ -13,6 +13,7 @@ typedef struct bitrs{
     uint *Rs;  			//4		//superblock array
     uint n;     //4     5+24=29
     std::vector<uint> dato;
+    std::vector<uint> ers;
 }BITRS;
 
 
@@ -88,6 +89,22 @@ uint rank1(BITRS * br, uint i) {
   for (a=aux;a<i/W;a++)
     resp+=popcount(br->data[a]);
   resp+=popcount(br->data[i/W]  & ((1<<(i & mask31))-1));
+  
+
+  return resp;
+}
+
+
+uint rank1_v(BITRS * br, uint i) {
+  uint a;
+  if(i+1==0) return 0;
+  ++i; 
+  uint resp=br->ers[i/br->s];
+  uint aux=(i/br->s)*(br->factor);
+  for (a=aux;a<i/W;a++)
+    resp+=popcount(br->dato[a]);
+  resp+=popcount(br->dato[i/W]  & ((1<<(i & mask31))-1));
+
   return resp;
 }
 
@@ -97,21 +114,25 @@ uint isBitSet(BITRS * br, uint i) {
     return 0u;
   }
   uint resultado;
-  uint primera_parte=(1u << (i%W));
-  uint segunda_parte=br->data[i/W];
 
   resultado = (1u << (i % W)) & br->data[i/W];
 
-  /*cout<<"i/W:"<< i/W <<endl;
-  cout<<"i%W:"<< i%W <<endl;
-  cout<<"1u:"<< 1u <<endl;
-  cout<<"(1u << (i%W))="<< primera_parte <<endl;
-  cout<<"br->data[i/W]="<< segunda_parte <<endl;
-  cout<<"(1u << (i%W)) & br->data[i/W] ="<< resultado <<endl;
-  cout<<endl;*/
-
   return resultado;
 }
+
+
+
+uint isBitSet2(BITRS * br, uint i) {
+  if(i<0){
+    return 0u;
+  }
+  uint resultado;
+
+  resultado = (1u << (i % W)) & br->dato[i/W];
+  
+  return resultado;
+}
+
 
 
 
