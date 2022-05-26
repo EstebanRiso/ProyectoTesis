@@ -133,7 +133,10 @@ int main(int argc, char * argv[]){
     KNN knn=KNN(&k2);
     
     try{
-        priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> resultado=knn.findNNQ(4,Point(18,8));
+        auto start = std::chrono::high_resolution_clock::now();
+        priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> resultado=knn.findNNQ(50,Point(8,18));
+		auto finish = std::chrono::high_resolution_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() << "ns\n";
         cout<<"RESULTADO FINAL:"<<endl;
 
         priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> resultado2=resultado;

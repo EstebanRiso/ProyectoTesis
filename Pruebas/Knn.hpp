@@ -3,6 +3,9 @@
 #include <queue>
 #include "KNNElementQueueComparator.hpp"
 #include "CandidatesMaxComparator.hpp"
+#include <cstdio>
+#include <stdlib.h>
+#include <unistd.h>
 
 #ifndef KNN_HPP
 #define KNN_HPP
@@ -60,6 +63,9 @@ class KNN{
             Point T=tmp.getCuadrant().getT();
             int secuence= getSecuence(tmp);
 
+            prueba();
+
+
             Rectangle temp;
             if(tmp.getLevel() == K2TREE->getHeight()){
                 accumX = S.getX();
@@ -77,11 +83,18 @@ class KNN{
                 }
                 if(isBitSet2(TL,posHijo)!=0){
                     temp= Rectangle(new Point(accumX,accumY),new Point(accumX+secuence,accumY+secuence));
+
                     int minD = minDist(q,temp);
                   
                     if(isCandidate(Cand,k,minD)){
                         KNNElementQueue a=getCandidate(temp,posHijo,tmp.getLevel()+1,minD);
                         pQueue.push(a);
+                        
+                        imprimir(pQueue);
+
+                        cout<<"presionar para continuar"<<endl;
+                        char character=getchar();
+
                     }
                 }
                 accumX=accumX+secuence+1;
@@ -89,12 +102,104 @@ class KNN{
             }           
         }
         
-        KNNElementQueue getCandidate(Rectangle temp, uint posHijo, int level, int minD) {
+        KNNElementQueue getCandidate(Rectangle temp, uint posHijo, int level, int minD) {    
+            cout<<"GET CANDIDATE"<<endl;
+            
+            cout<<"temp.getT().getX(): "<<temp.getT().getX()<<" temp.getT().getY(): "<<temp.getT().getY()<<endl;
+            cout<<"temp.getS().getX(): "<<temp.getS().getX()<<" temp.getS().getY(): "<<temp.getS().getY()<<endl;
+            
+            cout<<"posHijo:"<<posHijo<<endl;
+            cout<<"level:"<<level<<endl;
+            cout<<"minD: "<<minD<<endl;
+            cout<<"rank1_v(TL,"<<posHijo<<"): "<< rank1_v(TL,posHijo)<<endl;
+
+            cout<<"(rank1_v(TL,posHijo) * (K * K)) = "<<(rank1_v(TL,posHijo) * (K * K))<<endl;
+
+           
+
             return  KNNElementQueue((rank1_v(TL,posHijo) * (K * K)), temp, minD, level);
         }
 
         int getSecuence(KNNElementQueue tmp){
+
+            
+            cout<<"GET SECUENCE"<<endl;
+            
+            cout<<"tmp.getCuadrant().getT.getX(): "<<tmp.getCuadrant().getT().getX()<<" tmp.getCuadrant().getT.getY(): "<<tmp.getCuadrant().getT().getY()<<endl;
+            cout<<"tmp.getCuadrant().getS.getX(): "<<tmp.getCuadrant().getS().getX()<<" tmp.getCuadrant().getS.getY(): "<<tmp.getCuadrant().getS().getY()<<endl;
+
+            cout<<"tmp.getCuadrant().getT().getY()- tmp.getCuadrant().getS().getY()/K = "<<(tmp.getCuadrant().getT().getY()- tmp.getCuadrant().getS().getY())/K<<endl;
+            cout<<endl;
+
             return (tmp.getCuadrant().getT().getY()- tmp.getCuadrant().getS().getY())/K;
+        }
+
+
+        void prueba(){
+            
+
+            
+            Point q=Point(9,18);
+            
+            // CUADRANTE A 
+            cout<<"CUADRANTE A"<<endl<<endl;
+
+            Rectangle r=Rectangle(new Point(1,9),new Point(16,8));
+
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl<<endl;
+
+ 
+            //CUADRANTE B
+            cout<<"CUADRANTE B"<<endl<<endl;
+
+            r=Rectangle(new Point(9,9),new Point(16,16));
+
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl<<endl;
+
+
+            // CUADRANTE C 
+            cout<<"CUADRANTE C"<<endl<<endl;
+
+            r=Rectangle(new Point(1,1),new Point(8,8));
+
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl<<endl;
+
+
+            //CUADRANTE D
+            cout<<"CUADRANTE D"<<endl<<endl;
+
+            r=Rectangle(new Point(1,9),new Point(8,16));
+
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl;
+
+            cout<<"CUADRANTE 1 de D"<<endl;
+
+            r=Rectangle(new Point(5,9),new Point(8,12));
+
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl<<endl;
+
+            cout<<"CUADRANTE 1,1 de D"<<endl;
+
+            r=Rectangle(new Point(7,9),new Point(8,10));
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl<<endl;
+
+            cout<<"CUADRANTE 1,2 de D"<<endl;
+
+            r=Rectangle(new Point(7,11),new Point(8,12));
+
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl<<endl;
+
+
+            cout<<"CUADRANTE 1,3 de D"<<endl;
+
+            r=Rectangle(new Point(5,9),new Point(6,10));
+
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl<<endl;
+
+            cout<<"CUADRANTE 1,1,3 de D"<<endl;
+
+            r=Rectangle(new Point(7,9),new Point(7,9));
+            cout<<"mindist:"<<minDist(q,r)<<endl<<endl<<endl;
         }
 
         int minDist( Point p, Rectangle R){
@@ -149,6 +254,8 @@ class KNN{
 
         void imprimir(priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> &p){
 
+            cout<<"abriendo knn"<<endl;
+
             priority_queue<KNNElementQueue,vector<KNNElementQueue>,MINHEAP> resultado=p;
                 cout<<"pQueue"<<endl<<endl;
 
@@ -193,21 +300,22 @@ class KNN{
         priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> findNNQ(int k, Point q){
             
             uint data;
+
             q=traductionPointQ(q);
             uint dist = -1;
             uint diss=0;
 
-           // Rectangle quad= Rectangle( new Point(1,1) , new Point(K2TREE->getNodes(),K2TREE->getNodes()));
             Rectangle quad= Rectangle( new Point(1,1) , new Point(K2TREE->getNodes(),K2TREE->getNodes()));
             KNNElementQueue e= KNNElementQueue(diss,quad,minDist(q,quad),1);
 
             pQueue.push(e);
             int cantidad_ciclos=0;
 
-            while(!pQueue.empty()){                
+            while(!pQueue.empty()){
+                
                 KNNElementQueue tmp= pQueue.top();
-                imprimir(pQueue);
                 pQueue.pop();
+                //imprimir(pQueue);
                 if(candidates.size()!=0){ //identificar si tiene o no elementos;
                     KNNElementQueue obj= candidates.top();
                     

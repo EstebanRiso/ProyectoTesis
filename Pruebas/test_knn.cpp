@@ -3,6 +3,14 @@
 #include <chrono>
 
 
+bool cmp(pair<int, int> & a, pair<int, int> & b){
+	if(a.second != b.second){
+		return a.second < b.second;
+	}
+	return  a.first < b.first;
+}
+
+
 
 int main(int argc, char * argv[]){
 	
@@ -20,7 +28,7 @@ int main(int argc, char * argv[]){
 		auto start = std::chrono::high_resolution_clock::now();                                      //y x
         priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> resultado=knn.findNNQ(4,Point(8,18));
 		auto finish = std::chrono::high_resolution_clock::now();
-    	std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() << "ns\n";
+    	cout << std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() << "ns\n";
         priority_queue<KNNElementQueue,vector<KNNElementQueue>,MAXHEAP> resultado2=resultado;
 
         while(!resultado2.empty()){
